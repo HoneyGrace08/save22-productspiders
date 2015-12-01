@@ -13,10 +13,12 @@ class WwwExpansysComSgCrawler ():
     ]
   
   rules = (
-    Rule (LinkExtractor(
-          allow = (r'(.+)',),
+    Rule (
+          LinkExtractor(
+              allow = (r'(.+)',),
+          ),
           callback = 'parse_item',
-          )),
+          ),
   )
 
   def parse_item(self, response):
