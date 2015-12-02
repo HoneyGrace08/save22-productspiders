@@ -34,7 +34,7 @@ class AllForYou(scrapy.Spider):
         for i in item_na:
             item = AllForYou_Sg()
             item['url'] = response.url or None
-            item['categories'] = categories[10:]
+            item['categories'] = categories[10:] 
             item['sku'] = i.xpath('@id').extract() or None
             item['title'] = i.xpath('@data-name').extract() or None
             item['description'] = i.xpath('@data-desc').extract()
@@ -46,6 +46,15 @@ class AllForYou(scrapy.Spider):
             items.append(item)
             yield item
         #return items
+
+        next_page = response.css("div.pager > a::attr('href')")
+        if next_page:
+            url3 = response.urljoin(next_page[0].extract())
+            print "Next Page: " + url3
+            yield scrapy.Request(url3, self.parse_dir_contents)
+        
+
+
         
            
         
