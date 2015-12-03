@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 
@@ -22,6 +21,4 @@ class WwwExpansysComSgCrawler ():
   )
 
   def parse_item(self, response):
-
-    content = response.xpath()
-    #pass
+    pass
