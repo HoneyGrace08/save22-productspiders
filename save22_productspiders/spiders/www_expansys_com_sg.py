@@ -3,6 +3,7 @@
 # from scrapy.linkextractors import LinkExtractor
 import scrapy
 import pdb
+import re
 from scrapy.http import Request
 from save22_productspiders.items import Www_Expansys_Com_Sg
 
@@ -13,8 +14,7 @@ class Expansys(scrapy.Spider):
         "http://www.expansys.com.sg/"
     ]
 
-   
-
+    urls = ""
 
     def parse(self, response):
         
@@ -55,25 +55,25 @@ class Expansys(scrapy.Spider):
 
         man_links = response.xpath('//ul[@class="menus"]/li/select[@id="manufacturer"]/option/@value').extract()[1:]
         for man in man_links:
-            print man
-            yield Request(url='http://www.expansys.com.sg/#manid='+str(man), callback=self.parse_dir_contents)
-            
+            print "Pumasok"
+            urls = 'http://www.expansys.com.sg/#manid='+ str(man)
+            self.urls = urls
+            #print urls 
+            #yield Request( url = 'http://www.expansys.com.sg/#manid='+ str(man) , callback=self.parse_accessories)
+            if  self.urls:
+                print "######################################################"
+                yield Request(url='http://www.expansys.com.sg/accessoryservice.aspx?action=getmodels&manid='+str(man), callback=self.parse_get_model)
 
-
-    def parse_model (self, response):
-
-        #yield Request(url='http://www.expansys.com.sg/accessoryservice.aspx?action=getmodels&manid='+str(man), callback=self.parse_model)
-      
-        pdb.set_trace()
-
-
-
-        # model_links = response.xpath('//ul[@class="menus"]/li/select[@id="manufacturer"]/option/@value').extract()[1:]
-        # for man in man_links:
-        #     print man
-        #     yield Request(url='http://www.expansys.com.sg/#manid='+str(man), callback=self.parse_model)
-
-
+        
+    def parse_get_model(self ,response):
+        #pdb.set_trace()
+        print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+        body = response.xpath('//accessories/options/text()').extract()
+        print body
+        model = re.search('value\=\"(\d+)', body).group(1)
+        print model
+        for m in model:
+            yield Request( url = self.urls+'&instockcode='+str(m) , callback=self.parse_dir_contents)
 
     def  parse_dir_contents(self, response):
         #pdb.set_trace()
@@ -84,15 +84,15 @@ class Expansys(scrapy.Spider):
 
         if item_sku in sku:
             return
-
         sku.insert(len(sku), item_sku)
 
         for i in item_na:
             item = Www_Expansys_Com_Sg()
-         
             item['sku'] = item_sku
             #pdb.set_trace()
             item['url'] = response.url or None
             item['title'] = i.xpath('//div[@id="title"]/h1/text()').extract()
+            # item['description'] = i.xpath()
+            # item['image_urls'] = i.xpath()
             items.append(item)
             yield item
