@@ -79,7 +79,7 @@ class Expansys(scrapy.Spider):
         #pdb.set_trace()
         sku = list()
         items = list()
-        item_na = response.xpath('//ul[@id="breadcrumbs"]')
+        item_na = response.xpath('//*[@id="product"]')
         item_sku = response.xpath('//@data-sku').extract()  
 
         if item_sku in sku:
