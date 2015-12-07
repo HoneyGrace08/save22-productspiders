@@ -23,7 +23,6 @@ class Expansys(scrapy.Spider):
             print link
             #pdb.set_trace()
             
-
             accessories = "http://www.expansys.com.sg/accessory-finder/"
             smart_gadget = "http://www.expansys.com.sg/smart-gadget-offers/"
             if accessories == link:
@@ -58,22 +57,19 @@ class Expansys(scrapy.Spider):
             print "Pumasok"
             urls = 'http://www.expansys.com.sg/#manid='+ str(man)
             self.urls = urls
-            #print urls 
-            #yield Request( url = 'http://www.expansys.com.sg/#manid='+ str(man) , callback=self.parse_accessories)
+            
             if  self.urls:
-                print "######################################################"
                 yield Request(url='http://www.expansys.com.sg/accessoryservice.aspx?action=getmodels&manid='+str(man), callback=self.parse_get_model)
 
         
     def parse_get_model(self ,response):
         #pdb.set_trace()
-        print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
         body = response.xpath('//accessories/options/text()').extract()
         print body
-        model = re.search('value\=\"(\d+)', body).group(1)
-        print model
-        for m in model:
-            yield Request( url = self.urls+'&instockcode='+str(m) , callback=self.parse_dir_contents)
+        # model = re.search('value\=\"(\d+)', body).group(1)
+        # print model
+        # for m in model:
+        #     yield Request( url = self.urls+'&instockcode='+str(m) , callback=self.parse_dir_contents)
 
     def  parse_dir_contents(self, response):
         #pdb.set_trace()
@@ -87,12 +83,19 @@ class Expansys(scrapy.Spider):
         sku.insert(len(sku), item_sku)
 
         for i in item_na:
-            item = Www_Expansys_Com_Sg()
-            item['sku'] = item_sku
-            #pdb.set_trace()
-            item['url'] = response.url or None
-            item['title'] = i.xpath('//div[@id="title"]/h1/text()').extract()
-            # item['description'] = i.xpath()
-            # item['image_urls'] = i.xpath()
-            items.append(item)
-            yield item
+          item = Www_Expansys_Com_Sg()
+          item['url'] = i.xpath('//html/head/link[1]/@href').extract() 
+          item['sku'] = item_sku
+          item['ean'] = i.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract()
+          item['mfr'] =i.xpath('//*[@id="prod_core"]/ul/li[3]/span/text()').extract()
+          item['brand'] = i.xpath('//*[@id="prod_core"]/ul/li[4]/a/text()').extract() or None
+          item['title'] = i.xpath('//div[@id="title"]/h1/text()').extract()
+          item['description'] = i.xpath('//div[@id="description"]/h2/text()').extract()
+          item['image_urls'] = i.xpath('//*[@id="image"]/a/@href').extract()
+          item['currency'] = i.xpath('//*[@id="price"]/meta/@content').extract()
+          item['price'] = i.xpath('//p[@id="price"]/strong/span/text()').extract() 
+          item['old_price'] = i.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike/text()').extract() or None
+          item['offer'] = i.xpath('//*[@id="del_note"]/span/text()').extract() or None
+          item['stock'] = i.xpath('//*[@id="stock"]/text()').extract()
+          items.append(item)
+          yield item
