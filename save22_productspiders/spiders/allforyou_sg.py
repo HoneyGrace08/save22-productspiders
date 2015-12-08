@@ -25,24 +25,30 @@ class AllForYou(scrapy.Spider):
            
                      
     def parse_dir_contents(self, response):
-        items = list()
+
+
+        categories = []
+        contents = response.xpath('*[@id="content_breadcrumb"]/li/a/img')
+        for content in contents:
+            categories.append(content.xpath('@title').extract()[0])
+
+        items = []
         item_na = response.xpath('//div[@class="prod-data"]')
         categories = response.xpath('//title/text()').extract()[0]
-        #print categories
-        #print categories[10:]
+     
         
         for i in item_na:
             item = AllForYou_Sg()
             item['url'] = response.url or None
-            item['categories'] = categories[10:] 
+            item['categories'] = str(categories) or None
             item['sku'] = i.xpath('@id').extract() or None
             item['title'] = i.xpath('@data-name').extract() or None
             item['description'] = i.xpath('@data-desc').extract()
             item['image_urls'] = i.xpath('@data-imgurl').extract() or None
             item['price'] = i.xpath('@data-price').extract() or None
             item['old_price'] = i.xpath('@data-oldprice').extract() or None
-            item['offer'] = i.xpath('@data-offername').extract()
-            item['out_of_stock'] = i.xpath('@data-outofstock').extract() 
+            item['offer'] = i.xpath('@data-offername').extract()  or None
+            item['out_of_stock'] = i.xpath('@data-outofstock').extract()   or None
             items.append(item)
             yield item
         #return items
