@@ -28,7 +28,7 @@ class AllForYou(scrapy.Spider):
 
 
         categories = []
-        contents = response.xpath('*[@id="content_breadcrumb"]/li/a/img')
+        contents = response.xpath('//*[@id="content_breadcrumb"]/li/a/img')
         for content in contents:
             categories.append(content.xpath('@title').extract()[0])
 
