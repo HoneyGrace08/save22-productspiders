@@ -34,7 +34,6 @@ class AllForYou(scrapy.Spider):
 
         items = []
         item_na = response.xpath('//div[@class="prod-data"]')
-        categories = response.xpath('//title/text()').extract()[0]
      
         
         for i in item_na:
