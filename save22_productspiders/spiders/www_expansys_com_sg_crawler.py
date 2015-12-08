@@ -1,8 +1,8 @@
 from datetime import datetime
 
 import scrapy
-from scrapy.contrib.linkextractors import LinkExtractor
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 from save22_productspiders.items import Www_Expansys_Com_Sg
 
@@ -24,11 +24,9 @@ class WwwExpansysComSgCrawler (CrawlSpider):
     )
 
 
-
   def parse_item(self, response):
       sku = list()
       items = list()
-      #item_na = response.xpath('//ul[@id="breadcrumbs"]')
       item_na = response.xpath('//*[@id="product"]')
       item_sku = response.xpath('//@data-sku').extract()  
 
