@@ -25,8 +25,8 @@ class WwwExpansysComSgCrawler (CrawlSpider):
 
 
   def parse_item(self, response):
-      sku = list()
-      items = list()
+      sku = []
+      items = []
       item_na = response.xpath('//*[@id="product"]')
       item_sku = response.xpath('//@data-sku').extract()  
 
@@ -36,18 +36,18 @@ class WwwExpansysComSgCrawler (CrawlSpider):
 
       for i in item_na:
           item = Www_Expansys_Com_Sg()
-          item['url'] = i.xpath('//html/head/link[1]/@href').extract() 
+          item['url'] = response.url or None
           item['sku'] = item_sku
-          item['ean'] = i.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract()
-          item['mfr'] =i.xpath('//*[@id="prod_core"]/ul/li[3]/span/text()').extract()
+          item['ean'] = i.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract() or None
+          item['mfr'] =i.xpath('//*[@id="prod_core"]/ul/li[3]/span/text()').extract() or None
           item['brand'] = i.xpath('//*[@id="prod_core"]/ul/li[4]/a/text()').extract() or None
-          item['title'] = i.xpath('//div[@id="title"]/h1/text()').extract()
-          item['description'] = i.xpath('//div[@id="description"]/h2/text()').extract()
-          item['image_urls'] = i.xpath('//*[@id="image"]/a/@href').extract()
-          item['currency'] = i.xpath('//*[@id="price"]/meta/@content').extract()
-          item['price'] = i.xpath('//p[@id="price"]/strong/span/text()').extract() 
+          item['title'] = i.xpath('//div[@id="title"]/h1/text()').extract()  or None
+          item['description'] = i.xpath('//div[@id="description"]/h2/text()').extract()  or None
+          item['image_urls'] = i.xpath('//*[@id="image"]/a/@href').extract() or None
+          item['currency'] = i.xpath('//*[@id="price"]/meta/@content').extract() or None
+          item['price'] = i.xpath('//p[@id="price"]/strong/span/text()').extract()   or None
           item['old_price'] = i.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike/text()').extract() or None
           item['offer'] = i.xpath('//*[@id="del_note"]/span/text()').extract() or None
-          item['stock'] = i.xpath('//*[@id="stock"]/text()').extract()
+          item['stock'] = i.xpath('//*[@id="stock"]/text()').extract()  or None
           items.append(item)
           yield item
