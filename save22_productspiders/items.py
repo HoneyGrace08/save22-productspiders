@@ -18,7 +18,7 @@ class Www_Expansys_Com_Sg(scrapy.Item):
     #model = scrapy.Field()
     mfr = scrapy.Field()
     sku = scrapy.Field()
-    #upc = scrapy.Field()
+    upc = scrapy.Field()
     ean = scrapy.Field()
     image_urls = scrapy.Field()
     currency = scrapy.Field()
